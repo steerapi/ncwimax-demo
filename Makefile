@@ -1,4 +1,7 @@
 all:
 	cd web; make
-run:
+watch:
+	watch -n 1 make
+run: all
 	coffee node-app.coffee
+.PHONY: run watch
