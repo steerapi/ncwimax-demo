@@ -101,5 +101,5 @@ exports.runUFTP = (cb)->
       cb? err
   ,"stderr"
 
-exports.runUFTP (result)->
-  console.log "result",result
+# exports.runUFTP (result)->
+#   console.log "result",result
