@@ -1,0 +1,31 @@
+.navbar.navbar-fixed-top
+  .navbar-inner
+    .container
+      a.brand(href="#")
+        | Network Coding in WiMAX Demo
+      .nav-collapse
+        ul.nav
+          li(ng-class="{active:tab=='Home'}", ng-click="tab='Home'")
+            a Home
+        ul.nav
+          li(ng-class="{active:tab=='New Experiment'}", ng-click="tab='New Experiment'")
+            a New Experiment
+        ul.nav
+          li(ng-class="{active:tab=='Scheduled Experiments'}", ng-click="tab='Scheduled Experiments'")
+            a View Results
+      .pull-right
+        .btn.btn-primary
+          | Setup
+        .btn(ng-class="getN1Class()")
+          {{node1Status}}
+        .btn(ng-class="getN2Class()")
+          {{node2Status}}
+      ul.nav.pull-right
+        li.dropdown
+          a.dropdown-toggle(data-toggle="dropdown")
+            | Language: 
+            b English
+            b.caret
+          ul.dropdown-menu
+            li
+              a English

@@ -1,0 +1,9 @@
+.container(ng-show="tab=='Home'")
+  h1 Welcome to Network Coding in WiMAX Demo
+  p.lead(ng-bind-html-unsafe="abstract")
+  section
+    p.lead
+      -var html = "<b>New Experiment</b>"
+      | Click !{html} Tab to start a new experiment now.
+  
+  

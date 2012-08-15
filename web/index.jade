@@ -1,0 +1,29 @@
+!!! 5
+html
+  head
+    link(rel='stylesheet',href='css/bootstrap.css')
+    link(rel='stylesheet',href='css/index.css', class="cssfx")
+    
+    link(rel='stylesheet',href='css/jquery.ui/jquery.ui.css')
+    // if IE
+      link(rel='stylesheet',href='css/jquery.ui/jquery.ui.ie.css')
+
+    link(rel='stylesheet',href='css/bootstrap.css')
+    
+    script(src="socket.io/socket.io.js")
+    
+    script(src="js3rdparty/cssfx.js")
+    
+    script(src="js3rdparty/jquery.js")
+    script(src="js3rdparty/angular.js")
+    script(src="js3rdparty/jquery.ui.js")
+    script(src="js3rdparty/bootstrap-dropdown.js")
+    script(src="js/index.js")
+    script(src="http://www.google.com/jsapi")
+    script(src="js/loader.js")
+
+  body(ng-cloak, ng-controller="MainCtrl")
+    include top
+    include home
+    include new
+    include old

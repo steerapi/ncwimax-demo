@@ -1,0 +1,51 @@
+.container(ng-show="tab=='Scheduled Experiments'", ng-controller="OldCtrl")
+  .row
+    div.span2
+      div.well.navigation
+        ul.nav.nav-list
+          li(ng-repeat="type in types",ng-class="{'active':expTab==type}",ng-click="changeExpTab(type)")
+            a {{type}}
+      //- button.btn.btn-primary(ng-click="plot()")
+      //-   | Plot Selected
+    div.span10
+      div.row(ng-show="expTab=='File Transfer'")
+        #dVis
+      div.row(ng-show="expTab=='Throughput and Loss'")
+        .span5
+          #tVis
+        .span5
+          #lVis
+      div.scrollbox
+        div(ng-repeat="type in types")
+          div(ng-show="expTab==type")
+            table.table.table-bordered
+              thead(ng-show="expTab=='Throughput and Loss'")
+                tr
+                  th 
+                  th Configuration
+                  th Status
+                  th Throughput (Mbps)
+                  th Loss (%)
+              thead(ng-show="expTab=='File Transfer'")
+                tr
+                  th 
+                  th Configuration
+                  th Status
+                  th Delay (s)
+              tbody(ng-repeat="exp in experiments | filter:{expType:type}")
+                tr(ng-class="{'notdone':exp.status!='done'}")
+                  td
+                    input(ng-show="exp.status=='done'",type="checkbox", ng-model="exp.selected", ng-change="addRow(exp)")
+                  td {{exp.bsConf}}
+                    span(ng-show="exp.bsConf=='NC'")
+                      |-{{exp.redundancy}}
+                  td {{exp.status}}
+                  td(ng-show="exp.result.delay") 
+                    span(ng-show="exp.result.delay!='-'") {{exp.result.delay.toFixed(2)}}
+                    span(ng-show="exp.result.delay=='-'") {{exp.result.delay}}
+                  td(ng-show="exp.result.throughput")
+                    span(ng-show="exp.result.throughput!='-'") {{exp.result.throughput.toFixed(2)}}
+                    span(ng-show="exp.result.throughput=='-'") {{exp.result.throughput}}
+                  td(ng-show="exp.result.loss")
+                    span(ng-show="exp.result.loss!='-'") {{exp.result.loss.toFixed(2)}}
+                    span(ng-show="exp.result.loss=='-'") {{exp.result.loss}}

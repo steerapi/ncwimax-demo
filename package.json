@@ -1,0 +1,10 @@
+{
+  "name": "nc-demo",
+  "version": "1.0.0",
+  "dependencies" : {
+    "node-static": "*",
+    "underscore":"*",
+    "socket.io":"*",
+    "nexpect":"*"
+  }
+}

@@ -1,0 +1,7 @@
+./orbit.sh
+./bs.sh 1 1 #harq arq
+./setup.sh 1 #nc
+./run-iperf-reciever.sh
+./run-iperf-sender.sh
+./run-uftp-reciever.sh
+./run-uftp-sender.sh

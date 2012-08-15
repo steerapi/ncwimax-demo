@@ -1,0 +1,36 @@
+.container(ng-show="tab=='New Experiment'")
+  h1.headline Please config a new experiment
+  form.form-horizontal.well(ng-submit="schedule()")
+    fieldset
+      legend Experiment Type
+      .control-group
+        .controls
+          label.radio
+            input(value="Throughput and Loss", type="radio", name="expType", ng-model="exp.expType",required)
+            | Throughput and Loss
+          label.radio
+            input(value="File Transfer", type="radio", name="expType", ng-model="exp.expType", required)
+            | File Transfer
+    fieldset
+      legend Base Station Configuration
+      .control-group
+        .controls
+          label.radio
+            input(value="HARQ and ARQ", type="radio", name="bsConf", ng-model="exp.bsConf", required)
+            | Use HARQ/ARQ
+          label.radio
+            input(value="HARQ only", type="radio", name="bsConf", ng-model="exp.bsConf",required)
+            | Use HARQ only
+          label.radio
+            input(value="NC", type="radio", name="bsConf", ng-model="exp.bsConf", required)
+            span Use NC
+            div(ng-show="exp.bsConf=='NC'")
+              .span3
+                .row
+                  span.span3 Redundancy percentage: {{exp.redundancy}}%
+                .row
+                  span.span3(slider="exp.redundancy") 
+
+    .form-actions
+      input.btn.btn-primary.hspace10(type="submit", value='Run the experiment')
+
