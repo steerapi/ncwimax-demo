@@ -122,9 +122,12 @@ MainCtrl = function($scope) {
     var exp;
     exp = $scope.experiments[data.id];
     $.extend(true, exp, data);
-    console.log(exp);
     return $scope.$apply();
   });
+  $scope.cancel = function(exp) {
+    exp.status = "canceled";
+    return socket.emit("cancel", exp);
+  };
   $scope.getN1Class = function() {
     if ($scope.node1Status === "ON") {
       return "btn-success";

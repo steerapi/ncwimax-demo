@@ -1,8 +1,19 @@
 nexpect = require("nexpect")
 _ = require("underscore")
+
+cps = []
+exports.cancel = ->
+  for cp in cps
+    cp.kill("SIGHUP")
+
 exec = (cmd, cb, stream="stdout")->
-  nexpect.spawn("ssh", ["steerapi@console.sb4.orbit-lab.org", cmd],{verbose:true,stream:stream})
-  .run cb
+  try
+    cp = nexpect.spawn("ssh", ["steerapi@console.sb4.orbit-lab.org", cmd],{verbose:true,stream:stream})
+    .run cb
+    cps.push cp
+    cp
+  catch e
+    cb?()
 
 parseIperfRow = (row)->
   items = row.replace?(/\s/,"").split(",")[...-2]

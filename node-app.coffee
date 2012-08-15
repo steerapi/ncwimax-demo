@@ -19,7 +19,8 @@ class WorkQueue extends events.EventEmitter
     @queue = []
   process:(exp,cb)->
     schedule exp,(result)=>
-      cb result
+      if result
+        cb result
       @processing = false
       @next()
   next: ->
@@ -30,6 +31,14 @@ class WorkQueue extends events.EventEmitter
   push: (exp,cb)->
     @queue.push [exp,cb]
     @next(exp,cb)
+  cancel: (exp)->
+    for q,idx in @queue
+      if q[0].id == exp.id
+        q.splice idx,1
+        return
+    ssh.cancel()
+    @processing = false
+    @next()
 
 queue = new WorkQueue
 
@@ -40,6 +49,8 @@ io.sockets.on "connection", (_socket) ->
       socket.emit "status", status
       setTimeout chk, 5000
   , 5000
+  socket.on "cancel", (data)->
+    queue.cancel data
   socket.on "setup", (data)->
     ssh.setup()
   socket.on "schedule", (data)->
@@ -74,7 +85,7 @@ schedule = (exp,cb)->
         #   time_s: 20
   # run()
   switch exp.bsConf
-    when "HARQ/ARQ"
+    when "HARQ and ARQ"
       ssh.config 1,1,0,run
     when "HARQ only"
       ssh.config 1,0,0,run

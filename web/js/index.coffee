@@ -155,8 +155,10 @@ MainCtrl = ($scope)->
   socket.on "update", (data)->
     exp = $scope.experiments[data.id]
     $.extend true,exp,data
-    console.log exp
     $scope.$apply()
+  $scope.cancel = (exp)->
+    exp.status = "canceled"
+    socket.emit "cancel", exp
   $scope.getN1Class = ->
     if $scope.node1Status == "ON"
       "btn-success"
