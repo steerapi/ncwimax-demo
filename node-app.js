@@ -19,7 +19,7 @@ server = http.createServer(function(request, response) {
   });
 });
 
-server.listen(80);
+server.listen(8081);
 
 socketio = require('socket.io');
 
