@@ -147,7 +147,7 @@ MainCtrl = ($scope)->
   $scope.node1Status = "OFF"
   $scope.node2Status = "OFF"
   $scope.experiments = []
-  socket = io.connect('http://localhost:3000')
+  socket = io.connect()
   socket.on "status", (data)->
     $scope.node1Status=data[0]
     $scope.node2Status=data[1]
