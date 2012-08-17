@@ -8,7 +8,7 @@ exports.cancel = ->
 
 exec = (cmd, cb, stream="stdout")->
   try
-    cp = nexpect.spawn("ssh", ["steerapi@console.sb4.orbit-lab.org", cmd],{verbose:true,stream:stream})
+    cp = nexpect.spawn("ssh", ["-y","fouli@console.sb4.orbit-lab.org", cmd],{verbose:true,stream:stream})
     .run cb
     cps.push cp
     cp

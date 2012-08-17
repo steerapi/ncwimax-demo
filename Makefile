@@ -1,4 +1,4 @@
-all: node-app.js
+all: node-app.js ssh.js
 	cd web; make
 
 %.js: %.coffee

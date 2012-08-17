@@ -8,7 +8,7 @@ server = http.createServer((request, response) ->
   request.addListener "end", ->
     file.serve request, response
 )
-server.listen 3000
+server.listen 80
 socketio = require('socket.io')
 io = socketio.listen(server)
 socket = null
