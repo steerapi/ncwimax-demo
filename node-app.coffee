@@ -16,7 +16,7 @@ socket = null
 class WorkQueue extends events.EventEmitter
   constructor:->
     @processing = false
-    @queue = []
+    @queue  
   process:(exp,cb)->
     schedule exp,(result)=>
       if result
