@@ -8,7 +8,6 @@ watch:
 	watch -n 1 make
 
 run: all
-	killall node
-	forever start node-app.js
+	killall node nodejs & forever start node-app.js
 
 .PHONY: run watch
