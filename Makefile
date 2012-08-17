@@ -1,7 +1,13 @@
-all:
+all: node-app.js
 	cd web; make
+
+%.js: %.coffee
+	coffee -cb $<
+
 watch:
 	watch -n 1 make
+
 run: all
-	coffee node-app.coffee
+	forever start node-app.js
+
 .PHONY: run watch
