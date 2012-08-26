@@ -19,6 +19,10 @@ tr.notdone td {
   background-color: #888;
 }
 
+tr.notdone:hover td{
+  background-color: #888 !important;
+}
+
 .scrollbox {
 	position: relative;
 	z-index: 1;
@@ -63,4 +67,7 @@ tr.notdone td {
 }
 legend{
   margin-bottom:0px !important;
+}
+textarea{
+  padding: 15px;
 }

@@ -1,8 +1,8 @@
 static_ = require("node-static")
 http = require("http")
-ssh = require("./ssh")
 events = require("events")
 
+ssh = require("./ssh")
 file = new (static_.Server)("./web")
 server = http.createServer((request, response) ->
   request.addListener "end", ->
@@ -16,11 +16,11 @@ socket = null
 class WorkQueue extends events.EventEmitter
   constructor:->
     @processing = false
-    @queue  
+    @queue = []
   process:(exp,cb)->
     schedule exp,(result)=>
-      if result
-        cb result
+      # if result
+      cb result
       @processing = false
       @next()
   next: ->
@@ -42,6 +42,7 @@ class WorkQueue extends events.EventEmitter
 
 queue = new WorkQueue
 
+
 io.sockets.on "connection", (_socket) ->
   socket = _socket
   setTimeout chk=->
@@ -49,6 +50,10 @@ io.sockets.on "connection", (_socket) ->
       socket.emit "status", status
       setTimeout chk, 5000
   , 5000
+  ssh.consolestream.write = (data)->
+    socket.emit "consolelog", data.toString()
+    true
+
   socket.on "cancel", (data)->
     queue.cancel data
   socket.on "setup", (data)->
@@ -56,6 +61,10 @@ io.sockets.on "connection", (_socket) ->
   socket.on "schedule", (data)->
     exp = JSON.parse data
     queue.push exp, (result)->
+      if not result
+        exp.status = "error"
+        socket.emit "update", exp
+        return
       exp.status = "done"
       switch exp.expType
         when "Throughput and Loss"
@@ -65,9 +74,8 @@ io.sockets.on "connection", (_socket) ->
         when "File Transfer"
           exp.result = 
             delay: (result.time_s)
-      console.log exp.result
       socket.emit "update", exp
-    
+
 schedule = (exp,cb)->
   exp.status = "running"
   socket.emit "update", exp

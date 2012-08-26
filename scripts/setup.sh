@@ -1,6 +1,8 @@
 #!/bin/bash
 # $1 nc [1 on 0 off]
 
+echo ">>> Setting up WiMAX Link. <<<"
+
 #wimax
 #server
 ssh root@node1-1 'route add 10.41.14.2 gw 10.14.0.1'
@@ -15,6 +17,7 @@ ssh root@node1-2 'route add 10.14.1.1 gw 10.41.0.1'
 #nc
 if [ $1 -eq 1 ]
 then
+echo ">>> Setting up NC. <<<"
 # server
 ssh root@node1-1 'killall ncencoder'
 ssh root@node1-1 'iptables -F'

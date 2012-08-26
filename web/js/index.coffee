@@ -139,6 +139,7 @@ OldCtrl = ($scope)->
   $scope.updatePlotFileTransfer()
 
 MainCtrl = ($scope)->
+  
   $scope.tab = "Home"
   $scope.exp = 
     expType: null
@@ -146,18 +147,32 @@ MainCtrl = ($scope)->
     redundancy: 10
   $scope.node1Status = "OFF"
   $scope.node2Status = "OFF"
-  $scope.experiments = []
+  if localStorage.getItem("exp")
+    $scope.experiments = angular.fromJson(localStorage.getItem("exp"))
+  else
+    $scope.experiments = []
+    localStorage.setItem "exp", angular.toJson($scope.experiments)
+
   socket = io.connect()
+  socket.on "consolelog", (data)->
+    txt = $("#status")
+    txt.val( txt.val() + data)
+    txt.scrollTop(txt[0].scrollHeight - txt.height())
   socket.on "status", (data)->
     $scope.node1Status=data[0]
     $scope.node2Status=data[1]
     $scope.$apply()
   socket.on "update", (data)->
+    console.log "ERROR",data
+    if data.status == "done"
+      $scope.tab = "Scheduled Experiments"
     exp = $scope.experiments[data.id]
     $.extend true,exp,data
+    localStorage.setItem "exp", angular.toJson($scope.experiments)
     $scope.$apply()
   $scope.cancel = (exp)->
     exp.status = "canceled"
+    delete $scope.experiments[exp.id]
     socket.emit "cancel", exp
   $scope.getN1Class = ->
     if $scope.node1Status == "ON"
@@ -170,8 +185,10 @@ MainCtrl = ($scope)->
     else
       "btn-warning"
   $scope.setup = ->
+    $scope.tab = "Status"
     socket.emit "setup"
   $scope.schedule = ->
+    $scope.tab = "Status"
     exp = $.extend true,
       id: $scope.experiments.length
       status: "scheduled"
@@ -202,7 +219,7 @@ to decrease packet loss from around 11-32% to nearly 0%; compared to
 HARQ and joint HARQ/ARQ mechanisms, the NC architecture oers
 up to 5.9 times gain in throughput and 5.5 times reduction in end-to-
 end le transfer delay. By establishing NC as a potential substitute for
-HARQ/ARQ, our experiments oer important insights into cross-layer
+HARQ/ARQ, our experiments offer important insights into cross-layer
 designs of next generation wireless networks.
 
 """

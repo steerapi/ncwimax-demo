@@ -1,14 +1,35 @@
-nexpect = require("nexpect")
+nexpect = require("./nexpect")
 _ = require("underscore")
+stream = require('stream')
+events = require "events"
+
+consolestream = new stream.Stream()
+consolestream.writable = true
+consolestream.write = (data)->
+  true
+exports.consolestream = consolestream
 
 cps = []
+
 exports.cancel = ->
-  for cp in cps
-    cp.kill("SIGHUP")
+  console.log "CANCEL"
+  try
+    for cp in cps
+      process.kill cp.pid,"SIGINT"
+      process.kill cp.pid,"SIGHUP"
+      process.kill cp.pid,"SIGTERM"
+  catch error
+    console.log error
+  # consolestream.write = (data)->
+  #   true
+    # cp.kill("SIGINT")
+    # cp.kill("SIGHUP")
+    # cp.kill("SIGTERM")
+  cps = []
 
 exec = (cmd, cb, stream="stdout")->
   try
-    cp = nexpect.spawn("ssh", ["fouli@console.sb4.orbit-lab.org", cmd],{verbose:true,stream:stream})
+    cp = nexpect.spawn("ssh", ["fouli@console.sb4.orbit-lab.org", cmd],{verbose:true,stream:stream,consolestream:consolestream})
     .run cb
     cps.push cp
     cp
@@ -16,6 +37,8 @@ exec = (cmd, cb, stream="stdout")->
     cb?()
 
 parseIperfRow = (row)->
+  if not row
+    return null
   items = row.replace?(/\s/,"").split(",")[...-2]
   items = _.filter items, (item)->
     item if item
@@ -78,9 +101,14 @@ exports.setup = (cb)->
   exec "ncdemo/orbit.sh", (err, result)->
     cb? err, result
 exports.config = (harq,arq,nc,cb)->
-  exec "ncdemo/bs.sh #{harq} #{arq}", (err, result)->
-    exec "ncdemo/setup.sh #{nc}", (err, result)->
-      cb? err, result
+  exec "ncdemo/bs.sh #{harq} #{arq} && ncdemo/setup.sh #{nc}", (err, result)->
+    # console.log err
+    # 
+    # console.log err
+    # console.log result
+    # 
+    # exec "ncdemo/setup.sh #{nc}", (err, result)->
+    cb? err, result
 
 # console.log exports.config 1,0,0
 # console.log exports.config 0,0,1

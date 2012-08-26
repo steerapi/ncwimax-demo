@@ -111,8 +111,19 @@ MainCtrl = function($scope) {
   };
   $scope.node1Status = "OFF";
   $scope.node2Status = "OFF";
-  $scope.experiments = [];
+  if (localStorage.getItem("exp")) {
+    $scope.experiments = angular.fromJson(localStorage.getItem("exp"));
+  } else {
+    $scope.experiments = [];
+    localStorage.setItem("exp", angular.toJson($scope.experiments));
+  }
   socket = io.connect();
+  socket.on("consolelog", function(data) {
+    var txt;
+    txt = $("#status");
+    txt.val(txt.val() + data);
+    return txt.scrollTop(txt[0].scrollHeight - txt.height());
+  });
   socket.on("status", function(data) {
     $scope.node1Status = data[0];
     $scope.node2Status = data[1];
@@ -120,12 +131,18 @@ MainCtrl = function($scope) {
   });
   socket.on("update", function(data) {
     var exp;
+    console.log("ERROR", data);
+    if (data.status === "done") {
+      $scope.tab = "Scheduled Experiments";
+    }
     exp = $scope.experiments[data.id];
     $.extend(true, exp, data);
+    localStorage.setItem("exp", angular.toJson($scope.experiments));
     return $scope.$apply();
   });
   $scope.cancel = function(exp) {
     exp.status = "canceled";
+    delete $scope.experiments[exp.id];
     return socket.emit("cancel", exp);
   };
   $scope.getN1Class = function() {
@@ -143,10 +160,12 @@ MainCtrl = function($scope) {
     }
   };
   $scope.setup = function() {
+    $scope.tab = "Status";
     return socket.emit("setup");
   };
   $scope.schedule = function() {
     var exp;
+    $scope.tab = "Status";
     exp = $.extend(true, {
       id: $scope.experiments.length,
       status: "scheduled"
@@ -164,5 +183,5 @@ MainCtrl = function($scope) {
     $scope.experiments.push(exp);
     return socket.emit('schedule', angular.toJson(exp));
   };
-  return $scope.abstract = "\nWe design and implement a network-coding-enabled relia-\nbility architecture for next generation wireless networks. Our network\ncoding (NC) architecture uses a \nexible thread-based design, with each\nencoder-decoder instance applying systematic intra-session random lin-\near network coding as a packet erasure code at the IP layer. Using GENI\nWiMAX platforms, a series of point-to-point transmission experiments\nwere conducted to compare the performance of the NC architecture\nto that of the Automatic Repeated reQuest (ARQ) and Hybrid ARQ\n(HARQ) mechanisms. In our scenarios, the proposed architecture is able\nto decrease packet loss from around 11-32% to nearly 0%; compared to\nHARQ and joint HARQ/ARQ mechanisms, the NC architecture oers\nup to 5.9 times gain in throughput and 5.5 times reduction in end-to-\nend le transfer delay. By establishing NC as a potential substitute for\nHARQ/ARQ, our experiments oer important insights into cross-layer\ndesigns of next generation wireless networks.\n";
+  return $scope.abstract = "\nWe design and implement a network-coding-enabled relia-\nbility architecture for next generation wireless networks. Our network\ncoding (NC) architecture uses a \nexible thread-based design, with each\nencoder-decoder instance applying systematic intra-session random lin-\near network coding as a packet erasure code at the IP layer. Using GENI\nWiMAX platforms, a series of point-to-point transmission experiments\nwere conducted to compare the performance of the NC architecture\nto that of the Automatic Repeated reQuest (ARQ) and Hybrid ARQ\n(HARQ) mechanisms. In our scenarios, the proposed architecture is able\nto decrease packet loss from around 11-32% to nearly 0%; compared to\nHARQ and joint HARQ/ARQ mechanisms, the NC architecture oers\nup to 5.9 times gain in throughput and 5.5 times reduction in end-to-\nend le transfer delay. By establishing NC as a potential substitute for\nHARQ/ARQ, our experiments offer important insights into cross-layer\ndesigns of next generation wireless networks.\n";
 };

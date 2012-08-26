@@ -7,9 +7,9 @@ static_ = require("node-static");
 
 http = require("http");
 
-ssh = require("./ssh");
-
 events = require("events");
+
+ssh = require("./ssh");
 
 file = new static_.Server("./web");
 
@@ -33,15 +33,13 @@ WorkQueue = (function(_super) {
 
   function WorkQueue() {
     this.processing = false;
-    this.queue;
+    this.queue = [];
   }
 
   WorkQueue.prototype.process = function(exp, cb) {
     var _this = this;
     return schedule(exp, function(result) {
-      if (result) {
-        cb(result);
-      }
+      cb(result);
       _this.processing = false;
       return _this.next();
     });
@@ -91,6 +89,10 @@ io.sockets.on("connection", function(_socket) {
       return setTimeout(chk, 5000);
     });
   }, 5000);
+  ssh.consolestream.write = function(data) {
+    socket.emit("consolelog", data.toString());
+    return true;
+  };
   socket.on("cancel", function(data) {
     return queue.cancel(data);
   });
@@ -101,6 +103,11 @@ io.sockets.on("connection", function(_socket) {
     var exp;
     exp = JSON.parse(data);
     return queue.push(exp, function(result) {
+      if (!result) {
+        exp.status = "error";
+        socket.emit("update", exp);
+        return;
+      }
       exp.status = "done";
       switch (exp.expType) {
         case "Throughput and Loss":
@@ -114,7 +121,6 @@ io.sockets.on("connection", function(_socket) {
             delay: result.time_s
           };
       }
-      console.log(exp.result);
       return socket.emit("update", exp);
     });
   });

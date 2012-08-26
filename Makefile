@@ -7,7 +7,13 @@ all: node-app.js ssh.js
 watch:
 	watch -n 1 make
 
+kill:
+	killall node nodejs
+
 run: all
-	killall node nodejs & forever start node-app.js
+	node node-app.js
+
+forever: all
+	forever start node-app.js
 
 .PHONY: run watch

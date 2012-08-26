@@ -2,6 +2,7 @@
 # $1 = iperf [1 run 0 no]
 # $2 = uftp [1 run 0 no]
 
+echo ">>> Running Throughput and Loss Experiment. <<<"
 #if [ $1 -eq 1 ]
 #then
 #reciever
