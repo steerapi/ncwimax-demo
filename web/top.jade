@@ -17,7 +17,7 @@
           li(ng-class="{active:tab=='Scheduled Experiments'}", ng-click="tab='Scheduled Experiments'")
             a View Results
       .pull-right
-        .btn.btn-primary(ng-click="setup()")
+        .btn.btn-primary(ng-click="setup()",ng-disabled="isNodeReady()")
           | Setup Nodes
         .btn(ng-class="getN1Class()", disabled)
           | N1 {{node1Status}}

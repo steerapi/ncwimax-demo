@@ -80,7 +80,6 @@ OldCtrl = ($scope)->
   $scope.lchart = new google.visualization.ColumnChart(document.getElementById("lVis"))
   
   $scope.addRow = (exp)->
-    console.log exp
     if exp.selected
       result={}
       if exp.bsConf == "NC"
@@ -139,7 +138,17 @@ OldCtrl = ($scope)->
   $scope.updatePlotFileTransfer()
 
 MainCtrl = ($scope)->
-  
+  $scope.isNodeReady = ->
+    return $scope.node1Status == "ON" and $scope.node2Status == "ON"
+
+  appendStatus = (data)->
+    txt = $("#status")
+    txt.val( txt.val() + data)
+    txt.scrollTop(txt[0].scrollHeight - txt.height())
+  appendStatusLog = (data)->
+    txt = $("#statusLog")
+    txt.val( txt.val() + data)
+    txt.scrollTop(txt[0].scrollHeight - txt.height())
   $scope.tab = "Home"
   $scope.exp = 
     expType: null
@@ -152,28 +161,31 @@ MainCtrl = ($scope)->
   else
     $scope.experiments = []
     localStorage.setItem "exp", angular.toJson($scope.experiments)
-
   socket = io.connect()
   socket.on "consolelog", (data)->
-    txt = $("#status")
-    txt.val( txt.val() + data)
-    txt.scrollTop(txt[0].scrollHeight - txt.height())
+    appendStatusLog data
+  socket.on "disconnect", (data)->
+    alert "You are disconnected. Please refresh the page before continuing."
   socket.on "status", (data)->
     $scope.node1Status=data[0]
     $scope.node2Status=data[1]
+    if $scope.isNodeReady()
+      $scope.setupDisabled = true
+    else
+      $scope.setupDisabled = false
     $scope.$apply()
   socket.on "update", (data)->
-    console.log "ERROR",data
     if data.status == "done"
       $scope.tab = "Scheduled Experiments"
     exp = $scope.experiments[data.id]
     $.extend true,exp,data
     localStorage.setItem "exp", angular.toJson($scope.experiments)
     $scope.$apply()
+  $scope.setupDisabled = true
   $scope.cancel = (exp)->
-    exp.status = "canceled"
     delete $scope.experiments[exp.id]
     socket.emit "cancel", exp
+    localStorage.setItem "exp", angular.toJson($scope.experiments)
   $scope.getN1Class = ->
     if $scope.node1Status == "ON"
       "btn-success"
@@ -184,15 +196,30 @@ MainCtrl = ($scope)->
       "btn-success"
     else
       "btn-warning"
+    
+  socket.on "setupExecuted", (data)->
+    $scope.setupDisabled = false
   $scope.setup = ->
+    appendStatus "Setting up nodes 1 and 2. This operation takes up to 15 minuites.\n"
+    $scope.setupDisabled = true
     $scope.tab = "Status"
     socket.emit "setup"
+
+  $scope.scheduleDisabled = false
+  socket.on "ready", (data)->
+    $scope.scheduleDisabled = false
+
   $scope.schedule = ->
+    $scope.scheduleDisabled = true
     $scope.tab = "Status"
     exp = $.extend true,
       id: $scope.experiments.length
       status: "scheduled"
     ,$scope.exp
+    txt = "Running #{exp.expType} experiment with #{exp.bsConf}"
+    if exp.bsConf == "NC"
+      txt+="-#{exp.redundancy}"
+    appendStatus txt
     if exp.expType == "Throughput and Loss"
       exp.result =
         loss: "-"
@@ -201,7 +228,7 @@ MainCtrl = ($scope)->
       exp.result =
         delay: "-"   
     $scope.experiments.push exp
-    socket.emit 'schedule', angular.toJson(exp)
+    socket.emit 'run', angular.toJson(exp)
 
   $scope.abstract = """
 

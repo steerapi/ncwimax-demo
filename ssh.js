@@ -37,8 +37,11 @@ exports.cancel = function() {
   return cps = [];
 };
 
-exec = function(cmd, cb, stream) {
+exec = function(cmd, cb, _consolestream, stream) {
   var cp;
+  if (_consolestream == null) {
+    _consolestream = consolestream;
+  }
   if (stream == null) {
     stream = "stdout";
   }
@@ -46,7 +49,7 @@ exec = function(cmd, cb, stream) {
     cp = nexpect.spawn("ssh", ["fouli@console.sb4.orbit-lab.org", cmd], {
       verbose: true,
       stream: stream,
-      consolestream: consolestream
+      consolestream: _consolestream
     }).run(cb);
     cps.push(cp);
     return cp;
@@ -97,20 +100,27 @@ parseUFTP = function(data) {
 };
 
 parseStatus = function(data) {
-  var node1, node2;
+  var node1, node2, nodes;
   try {
-    node1 = data.match(/Node n_1_1 - State: POWER([A-Z]+)/);
-    node2 = data.match(/Node n_1_2 - State: POWER([A-Z]+)/);
-    return [node1[1], node2[1]];
+    nodes = data.split('\n');
+    node1 = nodes[0] === '1' ? "ON" : "OFF";
+    node2 = nodes[1] === '1' ? "ON" : "OFF";
+    return [node1, node2];
   } catch (err) {
     return ["OFF", "OFF"];
   }
 };
 
 exports.checkNodes = function(cb) {
+  var statusStream;
+  statusStream = new stream.Stream();
+  statusStream.writable = true;
+  statusStream.write = function(data) {
+    return true;
+  };
   return exec("ncdemo/check.sh", function(err, result) {
     return typeof cb === "function" ? cb(parseStatus(result.join("\n"))) : void 0;
-  });
+  }, statusStream);
 };
 
 exports.setup = function(cb) {

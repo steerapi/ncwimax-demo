@@ -32,5 +32,9 @@
                   span.span3(slider="exp.redundancy") 
 
     .form-actions
-      input.btn.btn-primary.hspace10(type="submit", value='Run the experiment')
+      input.btn.btn-primary.hspace10(type="submit", value='Run the experiment', ng-disabled="!isNodeReady() || scheduleDisabled")
+      span(ng-show="!isNodeReady()")
+        |   Please setup nodes before running a new experiment.
+      span(ng-show="scheduleDisabled")
+        |   Please wait until the previous experiment has finished before running a new one.
 

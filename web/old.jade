@@ -35,8 +35,8 @@
               tbody(ng-repeat="exp in experiments | filter:{expType:type}")
                 tr(ng-class="{'notdone':exp.status!='done'}")
                   td
-                    input(ng-show="exp.status=='done'",type="checkbox", ng-model="exp.selected", ng-change="addRow(exp)")
-                    div(ng-click="cancel(exp)")
+                    input.pull-right(ng-show="exp.status=='done'",type="checkbox", ng-model="exp.selected", ng-change="addRow(exp)")
+                    span(ng-click="cancel(exp)")
                       i.icon-remove
                   td {{exp.bsConf}}
                     span(ng-show="exp.bsConf=='NC'")

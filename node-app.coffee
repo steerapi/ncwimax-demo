@@ -1,10 +1,9 @@
 static_ = require("node-static")
-http = require("http")
+httpdigest = require('http-digest')
 events = require("events")
-
 ssh = require("./ssh")
 file = new (static_.Server)("./web")
-server = http.createServer((request, response) ->
+server = httpdigest.createServer("fouli", "fouli", (request, response) ->
   request.addListener "end", ->
     file.serve request, response
 )
@@ -13,54 +12,31 @@ socketio = require('socket.io')
 io = socketio.listen(server)
 socket = null
 
-class WorkQueue extends events.EventEmitter
-  constructor:->
-    @processing = false
-    @queue = []
-  process:(exp,cb)->
-    schedule exp,(result)=>
-      # if result
-      cb result
-      @processing = false
-      @next()
-  next: ->
-    if (not @processing) and (@queue.length != 0)
-      args = @queue.shift()
-      @processing = true
-      @process args...
-  push: (exp,cb)->
-    @queue.push [exp,cb]
-    @next(exp,cb)
-  cancel: (exp)->
-    for q,idx in @queue
-      if q[0].id == exp.id
-        q.splice idx,1
-        return
-    ssh.cancel()
-    @processing = false
-    @next()
-
-queue = new WorkQueue
-
-
+previousClient = null
 io.sockets.on "connection", (_socket) ->
   socket = _socket
-  setTimeout chk=->
+  socket.on "disconnect", ->
+    ssh.cancel()
+  if previousClient
+    previousClient.disconnect()
+  previousClient = socket
+  chk=->
     ssh.checkNodes (status)->
       socket.emit "status", status
       setTimeout chk, 5000
-  , 5000
+  chk()
   ssh.consolestream.write = (data)->
     socket.emit "consolelog", data.toString()
     true
-
   socket.on "cancel", (data)->
-    queue.cancel data
+    ssh.cancel()
+    socket.emit "ready"
   socket.on "setup", (data)->
-    ssh.setup()
-  socket.on "schedule", (data)->
+    ssh.setup ->
+      socket.emit "setupExecuted"
+  socket.on "run", (data)->
     exp = JSON.parse data
-    queue.push exp, (result)->
+    schedule exp,(result)=>
       if not result
         exp.status = "error"
         socket.emit "update", exp
@@ -75,6 +51,7 @@ io.sockets.on "connection", (_socket) ->
           exp.result = 
             delay: (result.time_s)
       socket.emit "update", exp
+      socket.emit "ready"
 
 schedule = (exp,cb)->
   exp.status = "running"

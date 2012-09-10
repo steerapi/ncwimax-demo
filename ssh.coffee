@@ -85,9 +85,11 @@ parseUFTP = (data)->
 # """
 parseStatus = (data)->
   try
-    node1=data.match /Node n_1_1 - State: POWER([A-Z]+)/
-    node2=data.match /Node n_1_2 - State: POWER([A-Z]+)/
-    return [node1[1],node2[1]]
+    nodes=data.split('\n')
+    node1=if nodes[0]=='1' then "ON" else "OFF"
+    node2=if nodes[1]=='1' then "ON" else "OFF"
+    # node2=data.match /Node n_1_2 - State: POWER([A-Z]+)/
+    return [node1,node2]
   catch err
     return ["OFF","OFF"]
 
