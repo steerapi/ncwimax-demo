@@ -244,7 +244,8 @@ function chain (context) {
       //
       function onData (data) {
         process.stdout.write(data);
-        context.consolestream.write(data + '\n');
+        if(context.consolestream)
+          context.consolestream.write(data + '\n');
       }
 
       if (context.cwd) {

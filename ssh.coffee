@@ -27,9 +27,9 @@ exports.cancel = ->
     # cp.kill("SIGTERM")
   cps = []
 
-exec = (cmd, cb, stream="stdout")->
+exec = (cmd, cb, _consolestream=consolestream, stream="stdout")->
   try
-    cp = nexpect.spawn("ssh", ["fouli@console.sb4.orbit-lab.org", cmd],{verbose:true,stream:stream,consolestream:consolestream})
+    cp = nexpect.spawn("ssh", ["fouli@console.sb4.orbit-lab.org", cmd],{verbose:true,stream:stream,consolestream:_consolestream})
     .run cb
     cps.push cp
     cp
@@ -92,14 +92,18 @@ parseStatus = (data)->
     return ["OFF","OFF"]
 
 exports.checkNodes = (cb)->
+  statusStream = new stream.Stream()
+  statusStream.writable = true
+  statusStream.write = (data)->
+    true  
   exec "ncdemo/check.sh", (err, result)->
     cb? parseStatus(result.join("\n"))
-# exports.checkNodes (result)->
-#   console.log result
+  , statusStream
 
 exports.setup = (cb)->
   exec "ncdemo/orbit.sh", (err, result)->
     cb? err, result
+
 exports.config = (harq,arq,nc,cb)->
   exec "ncdemo/bs.sh #{harq} #{arq} && ncdemo/setup.sh #{nc}", (err, result)->
     # console.log err
