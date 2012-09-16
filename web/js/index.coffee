@@ -175,7 +175,7 @@ MainCtrl = ($scope,$timeout)->
   socket.on "consolelog", (data)->
     appendStatusLog data
   socket.on "disconnect", (data)->
-    alert "You are disconnected. Please refresh the page before continuing."
+    # alert "You are disconnected. Please refresh the page before continuing."
   socket.on "state", (data)->
     $scope.state = data.state
     txt = $("#status")

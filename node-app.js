@@ -61,6 +61,11 @@ io.sockets.on("connection", function(_socket) {
     return socket.emit("cancel");
   });
   socket.on("setup", function(data) {
+    if (state === "busy") {
+      ssh.cancel();
+      ssh.cancel();
+      ssh.cancel();
+    }
     his1 = "Setting up nodes 1 and 2. This operation takes up to 15 minuites.\n";
     his2 = "";
     state = "busy";
@@ -72,6 +77,11 @@ io.sockets.on("connection", function(_socket) {
   return socket.on("run", function(data) {
     var exp,
       _this = this;
+    if (state === "busy") {
+      exp.status = "error";
+      socket.emit("update", exp);
+      return;
+    }
     state = "busy";
     exp = JSON.parse(data);
     return schedule(exp, function(result) {

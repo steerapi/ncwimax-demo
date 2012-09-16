@@ -144,9 +144,7 @@ MainCtrl = function($scope, $timeout) {
   socket.on("consolelog", function(data) {
     return appendStatusLog(data);
   });
-  socket.on("disconnect", function(data) {
-    return alert("You are disconnected. Please refresh the page before continuing.");
-  });
+  socket.on("disconnect", function(data) {});
   socket.on("state", function(data) {
     var txt;
     $scope.state = data.state;

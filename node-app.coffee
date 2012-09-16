@@ -42,6 +42,10 @@ io.sockets.on "connection", (_socket) ->
     ssh.cancel()
     socket.emit "cancel"
   socket.on "setup", (data)->
+    if state=="busy"
+      ssh.cancel()
+      ssh.cancel()
+      ssh.cancel()      
     his1="Setting up nodes 1 and 2. This operation takes up to 15 minuites.\n"
     his2=""
     state="busy"
@@ -49,6 +53,10 @@ io.sockets.on "connection", (_socket) ->
       socket.emit "setup"
       state="idle"
   socket.on "run", (data)->
+    if state=="busy"
+      exp.status = "error"
+      socket.emit "update", exp      
+      return
     state="busy"
     exp = JSON.parse data
     schedule exp,(result)=>
