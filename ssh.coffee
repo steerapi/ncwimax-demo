@@ -113,7 +113,8 @@ exports.checkNodes = (cb)->
 exports.setup = (cb)->
   exec "ncdemo/orbit.sh", (err, result)->
     cb? err, result
-
+exports.restartBS = (cb)->
+  # exec ""
 exports.config = (harq,arq,nc,cb)->
   exec "ncdemo/bs.sh #{harq} #{arq} && ncdemo/setup.sh #{nc}", (err, result)->
     # console.log err

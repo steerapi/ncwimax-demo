@@ -32,6 +32,8 @@ setTimeout upd=->
 io.sockets.on "connection", (_socket) ->
   socket = _socket
   socket.emit "state", state
+  socket.on "restartBS", (data)->
+    ssh.restartBS()
   socket.on "checkNodes", (data)->
     ssh.checkNodes (status)->
       socket.emit "checkNodes", status

@@ -46,6 +46,9 @@ setTimeout(upd = function() {
 io.sockets.on("connection", function(_socket) {
   socket = _socket;
   socket.emit("state", state);
+  socket.on("restartBS", function(data) {
+    return ssh.restartBS();
+  });
   socket.on("checkNodes", function(data) {
     return ssh.checkNodes(function(status) {
       return socket.emit("checkNodes", status);

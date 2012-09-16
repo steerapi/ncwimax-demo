@@ -151,7 +151,7 @@ MainCtrl = function($scope, $timeout) {
       scrolling = true;
       return setTimeout(function() {
         return scrolling = false;
-      }, 1000);
+      }, 5000);
     }
   };
   $("#status").scroll(scl);
@@ -235,6 +235,9 @@ MainCtrl = function($scope, $timeout) {
   $scope.setup = function() {
     $scope.setupDisabled = true;
     return socket.emit("setup");
+  };
+  $scope.restartBS = function() {
+    return socket.emit("restartBS");
   };
   scheduleDisabled = false;
   $scope.schedule = function() {

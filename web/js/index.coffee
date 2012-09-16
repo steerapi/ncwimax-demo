@@ -182,7 +182,7 @@ MainCtrl = ($scope,$timeout)->
       scrolling = true
       setTimeout ->
         scrolling = false
-      , 1000
+      , 5000
   $("#status").scroll scl
   $("#statusLog").scroll scl
   socket.on "state", (data)->
@@ -207,6 +207,7 @@ MainCtrl = ($scope,$timeout)->
     else
       $scope.setupDisabled = false
     $scope.$apply()
+    
   socket.on "update", (data)->
     if data.status == "done"
       $scope.tab = "Scheduled Experiments"
@@ -248,7 +249,9 @@ MainCtrl = ($scope,$timeout)->
     # appendStatus "Setting up nodes 1 and 2. This operation takes up to 15 minuites.\n"
     $scope.setupDisabled = true
     socket.emit "setup"
-
+  $scope.restartBS = ->
+    socket.emit "restartBS"
+    
   scheduleDisabled = false
   $scope.schedule = ->
     exp = $.extend true,

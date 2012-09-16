@@ -140,6 +140,8 @@ exports.setup = function(cb) {
   });
 };
 
+exports.restartBS = function(cb) {};
+
 exports.config = function(harq, arq, nc, cb) {
   return exec("ncdemo/bs.sh " + harq + " " + arq + " && ncdemo/setup.sh " + nc, function(err, result) {
     return typeof cb === "function" ? cb(err, result) : void 0;

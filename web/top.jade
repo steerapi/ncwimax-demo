@@ -19,6 +19,8 @@
       .pull-right
         //- .btn.btn-primary(ng-click="setup()",ng-disabled="isNodeReady()")
           //- | Setup Nodes
+        //- .btn.btn-primary(ng-click="restartBS()")
+        //-   | Restart BS
         .btn(ng-class="getN1Class()", disabled)
           | N1 {{node1Status}}
         .btn(ng-class="getN2Class()", disabled)
