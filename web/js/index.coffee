@@ -216,7 +216,7 @@ MainCtrl = ($scope)->
       id: $scope.experiments.length
       status: "scheduled"
     ,$scope.exp
-    txt = "Running #{exp.expType} experiment with #{exp.bsConf}"
+    txt = "Running #{exp.expType} experiment with #{exp.bsConf}\n"
     if exp.bsConf == "NC"
       txt+="-#{exp.redundancy}"
     appendStatus txt
@@ -232,20 +232,19 @@ MainCtrl = ($scope)->
 
   $scope.abstract = """
 
-We design and implement a network-coding-enabled relia-
-bility architecture for next generation wireless networks. Our network
-coding (NC) architecture uses a 
-exible thread-based design, with each
-encoder-decoder instance applying systematic intra-session random lin-
-ear network coding as a packet erasure code at the IP layer. Using GENI
+We design and implement a network-coding-enabled reliability architecture 
+for next generation wireless networks. Our network
+coding (NC) architecture uses a flexible thread-based design, with each
+encoder-decoder instance applying systematic intra-session random linear 
+network coding as a packet erasure code at the IP layer. Using GENI
 WiMAX platforms, a series of point-to-point transmission experiments
 were conducted to compare the performance of the NC architecture
 to that of the Automatic Repeated reQuest (ARQ) and Hybrid ARQ
 (HARQ) mechanisms. In our scenarios, the proposed architecture is able
 to decrease packet loss from around 11-32% to nearly 0%; compared to
-HARQ and joint HARQ/ARQ mechanisms, the NC architecture oers
-up to 5.9 times gain in throughput and 5.5 times reduction in end-to-
-end le transfer delay. By establishing NC as a potential substitute for
+HARQ and joint HARQ/ARQ mechanisms, the NC architecture offers
+up to 5.9 times gain in throughput and 5.5 times reduction in end-to-end 
+file transfer delay. By establishing NC as a potential substitute for
 HARQ/ARQ, our experiments offer important insights into cross-layer
 designs of next generation wireless networks.
 

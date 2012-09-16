@@ -199,7 +199,7 @@ MainCtrl = function($scope) {
       id: $scope.experiments.length,
       status: "scheduled"
     }, $scope.exp);
-    txt = "Running " + exp.expType + " experiment with " + exp.bsConf;
+    txt = "Running " + exp.expType + " experiment with " + exp.bsConf + "\n";
     if (exp.bsConf === "NC") {
       txt += "-" + exp.redundancy;
     }
@@ -217,5 +217,5 @@ MainCtrl = function($scope) {
     $scope.experiments.push(exp);
     return socket.emit('run', angular.toJson(exp));
   };
-  return $scope.abstract = "\nWe design and implement a network-coding-enabled relia-\nbility architecture for next generation wireless networks. Our network\ncoding (NC) architecture uses a \nexible thread-based design, with each\nencoder-decoder instance applying systematic intra-session random lin-\near network coding as a packet erasure code at the IP layer. Using GENI\nWiMAX platforms, a series of point-to-point transmission experiments\nwere conducted to compare the performance of the NC architecture\nto that of the Automatic Repeated reQuest (ARQ) and Hybrid ARQ\n(HARQ) mechanisms. In our scenarios, the proposed architecture is able\nto decrease packet loss from around 11-32% to nearly 0%; compared to\nHARQ and joint HARQ/ARQ mechanisms, the NC architecture oers\nup to 5.9 times gain in throughput and 5.5 times reduction in end-to-\nend le transfer delay. By establishing NC as a potential substitute for\nHARQ/ARQ, our experiments offer important insights into cross-layer\ndesigns of next generation wireless networks.\n";
+  return $scope.abstract = "\nWe design and implement a network-coding-enabled reliability architecture \nfor next generation wireless networks. Our network\ncoding (NC) architecture uses a flexible thread-based design, with each\nencoder-decoder instance applying systematic intra-session random linear \nnetwork coding as a packet erasure code at the IP layer. Using GENI\nWiMAX platforms, a series of point-to-point transmission experiments\nwere conducted to compare the performance of the NC architecture\nto that of the Automatic Repeated reQuest (ARQ) and Hybrid ARQ\n(HARQ) mechanisms. In our scenarios, the proposed architecture is able\nto decrease packet loss from around 11-32% to nearly 0%; compared to\nHARQ and joint HARQ/ARQ mechanisms, the NC architecture offers\nup to 5.9 times gain in throughput and 5.5 times reduction in end-to-end \nfile transfer delay. By establishing NC as a potential substitute for\nHARQ/ARQ, our experiments offer important insights into cross-layer\ndesigns of next generation wireless networks.\n";
 };
