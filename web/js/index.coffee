@@ -178,7 +178,7 @@ MainCtrl = ($scope,$timeout)->
     # alert "You are disconnected. Please refresh the page before continuing."
   scrolling = false
   scl = ->
-    if scrolling!=true
+    if not scrolling
       scrolling = true
       setTimeout ->
         scrolling = false
@@ -187,13 +187,13 @@ MainCtrl = ($scope,$timeout)->
   $("#statusLog").scroll scl
   socket.on "state", (data)->
     $scope.state = data.state
-    txt = $("#status")
-    txt.val( data.his1 )
-    txt = $("#statusLog")
-    txt.val( data.his2 )
+    txt1 = $("#status")
+    txt1.val( data.his1 )
+    txt2 = $("#statusLog")
+    txt2.val( data.his2 )
     if not scrolling
-      txt.scrollTop(txt[0].scrollHeight - txt.height())
-      txt.scrollTop(txt[0].scrollHeight - txt.height())
+      txt1.scrollTop(txt1[0].scrollHeight - txt1.height())
+      txt2.scrollTop(txt2[0].scrollHeight - txt2.height())
     $scope.$apply()
   socket.on "checkOrbit", (access)->
     if(access)
