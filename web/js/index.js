@@ -101,7 +101,7 @@ OldCtrl = function($scope) {
 };
 
 MainCtrl = function($scope, $timeout) {
-  var appendStatus, appendStatusLog, chk, currentExp, scheduleDisabled, socket;
+  var appendStatus, appendStatusLog, chk, currentExp, scheduleDisabled, scl, scrolling, socket;
   $scope.isNodeReady = function() {
     return $scope.node1Status === "ON" && $scope.node2Status === "ON";
   };
@@ -145,15 +145,28 @@ MainCtrl = function($scope, $timeout) {
     return appendStatusLog(data);
   });
   socket.on("disconnect", function(data) {});
+  scrolling = false;
+  scl = function() {
+    if (scrolling !== true) {
+      scrolling = true;
+      return setTimeout(function() {
+        return scrolling = false;
+      }, 1000);
+    }
+  };
+  $("#status").scroll(scl);
+  $("#statusLog").scroll(scl);
   socket.on("state", function(data) {
     var txt;
     $scope.state = data.state;
     txt = $("#status");
     txt.val(data.his1);
-    txt.scrollTop(txt[0].scrollHeight - txt.height());
     txt = $("#statusLog");
     txt.val(data.his2);
-    txt.scrollTop(txt[0].scrollHeight - txt.height());
+    if (!scrolling) {
+      txt.scrollTop(txt[0].scrollHeight - txt.height());
+      txt.scrollTop(txt[0].scrollHeight - txt.height());
+    }
     return $scope.$apply();
   });
   socket.on("checkOrbit", function(access) {
