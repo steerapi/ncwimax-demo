@@ -180,10 +180,10 @@ MainCtrl = ($scope,$timeout)->
     $scope.state = data.state
     txt = $("#status")
     txt.val( data.his1 )
-    txt.scrollTop(txt[0].scrollHeight - txt.height())
+    # txt.scrollTop(txt[0].scrollHeight - txt.height())
     txt = $("#statusLog")
     txt.val( data.his2 )
-    txt.scrollTop(txt[0].scrollHeight - txt.height())
+    # txt.scrollTop(txt[0].scrollHeight - txt.height())
     $scope.$apply()
   socket.on "checkOrbit", (access)->
     if(access)
