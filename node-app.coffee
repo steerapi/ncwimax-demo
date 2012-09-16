@@ -101,7 +101,11 @@ schedule = (exp,cb)->
   switch exp.bsConf
     when "HARQ and ARQ"
       ssh.config 1,1,0,run
+    when "ARQ only"
+      ssh.config 0,1,0,run
     when "HARQ only"
       ssh.config 1,0,0,run
     when "NC"
+      ssh.config 0,0,1,run
+    when "Raw"
       ssh.config 0,0,0,run

@@ -59,8 +59,14 @@
               .control-group
                 .controls
                   label.radio
+                    input(value="Raw", type="radio", name="bsConf", ng-model="exp.bsConf", required)
+                    | Raw
+                  label.radio
                     input(value="HARQ and ARQ", type="radio", name="bsConf", ng-model="exp.bsConf", required)
                     | Use HARQ/ARQ
+                  label.radio
+                    input(value="ARQ only", type="radio", name="bsConf", ng-model="exp.bsConf",required)
+                    | Use ARQ only
                   label.radio
                     input(value="HARQ only", type="radio", name="bsConf", ng-model="exp.bsConf",required)
                     | Use HARQ only
