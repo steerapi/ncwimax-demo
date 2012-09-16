@@ -37,9 +37,9 @@
           .btn.btn-primary(ng-click="setup()",ng-disabled="isNodeReady()")
             | Setup Nodes
           .btn(ng-class="getN1Class()", disabled)
-            | N1 {{node1Status}}
+            | BS {{node1Status}}
           .btn(ng-class="getN2Class()", disabled)
-            | N2 {{node2Status}}
+            | SS {{node2Status}}
 
         div.well(ng-show="activeStep==3")
           h1.headline Please config a new experiment
