@@ -2,9 +2,9 @@
 # $1 nc [1 on 0 off]
 
 echo ">>> Setting up WiMAX Link. <<<"
-
 #wimax
 #server
+ssh root@node1-1 'wimaxcu dconnect'
 ssh root@node1-1 'route add 10.41.14.2 gw 10.14.0.1'
 #client
 ssh root@node1-2 'wimaxcu dconnect'

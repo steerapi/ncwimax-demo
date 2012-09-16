@@ -131,9 +131,13 @@ schedule = function(exp, cb) {
   switch (exp.bsConf) {
     case "HARQ and ARQ":
       return ssh.config(1, 1, 0, run);
+    case "ARQ only":
+      return ssh.config(0, 1, 0, run);
     case "HARQ only":
       return ssh.config(1, 0, 0, run);
     case "NC":
+      return ssh.config(0, 0, 1, run);
+    case "Raw":
       return ssh.config(0, 0, 0, run);
   }
 };

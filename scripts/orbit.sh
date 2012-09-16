@@ -3,12 +3,12 @@
 #[1,1] = server
 #[1,2] = client
 
-echo ">>> Setting up node. Please wait 10 minutes. <<<"
-
-omf_tell offh [[1,1],[1,2]]
-sleep 180
-omf_load [[1,1],[1,2]] ncwimax-demo.ndz
-omf_tell offh [[1,1],[1,2]]
-sleep 180
-omf_tell on [[1,1],[1,2]]
-sleep 180
+echo ">>> Setting up node. Please wait... <<<"
+omf-5.3 tell -a offh -t node1-1.sb4.orbit-lab.org,node1-2.sb4.orbit-lab.org
+sleep 10
+omf-5.3 load -i ncwimax-demo.ndz -t node1-1.sb4.orbit-lab.org,node1-2.sb4.orbit-lab.org
+omf-5.3 tell -a offh -t node1-1.sb4.orbit-lab.org,node1-2.sb4.orbit-lab.org
+sleep 10
+omf-5.3 tell -a on -t node1-1.sb4.orbit-lab.org,node1-2.sb4.orbit-lab.org
+sleep 10
+echo ">>> Done setting up node. <<<"
