@@ -1,42 +1,58 @@
 static_ = require("node-static")
-httpdigest = require('http-digest')
+http = require('http')
 events = require("events")
 ssh = require("./ssh")
 file = new (static_.Server)("./web")
-server = httpdigest.createServer("fouli", "fouli", (request, response) ->
-  request.addListener "end", ->
-    file.serve request, response
+server = http.createServer((request, response) ->
+  file.serve request, response
 )
 server.listen 8081
 socketio = require('socket.io')
 io = socketio.listen(server)
 socket = null
 
-previousClient = null
+#states=["busy","idle"]
+state="idle"
+his1=""
+his2=""
+
+ssh.consolestream.write = (data)->
+  his2+=data.toString()
+  # io.sockets.emit "consolelog", data.toString()
+  true
+
+setTimeout upd=->
+  io.sockets.emit "state", 
+    state:state
+    his1:his1
+    his2:his2
+  setTimeout upd,1000
+, 1000
+
 io.sockets.on "connection", (_socket) ->
   socket = _socket
-  socket.on "disconnect", ->
-    ssh.cancel()
-  if previousClient
-    previousClient.disconnect()
-  previousClient = socket
-  chk=->
+  socket.emit "state", state
+  socket.on "checkNodes", (data)->
     ssh.checkNodes (status)->
-      socket.emit "status", status
-      setTimeout chk, 5000
-  chk()
-  ssh.consolestream.write = (data)->
-    socket.emit "consolelog", data.toString()
-    true
+      socket.emit "checkNodes", status
+  socket.on "checkOrbit", (data)->
+    ssh.checkOrbit (canAccess)->
+      socket.emit "checkOrbit", canAccess
   socket.on "cancel", (data)->
     ssh.cancel()
-    socket.emit "ready"
+    socket.emit "cancel"
   socket.on "setup", (data)->
+    his1="Setting up nodes 1 and 2. This operation takes up to 15 minuites.\n"
+    his2=""
+    state="busy"
     ssh.setup ->
-      socket.emit "setupExecuted"
+      socket.emit "setup"
+      state="idle"
   socket.on "run", (data)->
+    state="busy"
     exp = JSON.parse data
     schedule exp,(result)=>
+      state="idle"
       if not result
         exp.status = "error"
         socket.emit "update", exp
@@ -54,6 +70,11 @@ io.sockets.on "connection", (_socket) ->
       socket.emit "ready"
 
 schedule = (exp,cb)->
+  txt = "\nRunning #{exp.expType} experiment with #{exp.bsConf}"
+  if exp.bsConf == "NC"
+    txt+="-#{exp.redundancy}"
+  his1=txt
+  his2=""
   exp.status = "running"
   socket.emit "update", exp
   run = ->

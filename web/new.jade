@@ -1,40 +1,90 @@
 .container(ng-show="tab=='New Experiment'")
-  h1.headline Please config a new experiment
-  form.form-horizontal.well(ng-submit="schedule()")
-    fieldset
-      legend Experiment Type
-      .control-group
-        .controls
-          label.radio
-            input(value="Throughput and Loss", type="radio", name="expType", ng-model="exp.expType",required)
-            | Throughput and Loss
-          label.radio
-            input(value="File Transfer", type="radio", name="expType", ng-model="exp.expType", required)
-            | File Transfer
-    fieldset
-      legend Base Station Configuration
-      .control-group
-        .controls
-          label.radio
-            input(value="HARQ and ARQ", type="radio", name="bsConf", ng-model="exp.bsConf", required)
-            | Use HARQ/ARQ
-          label.radio
-            input(value="HARQ only", type="radio", name="bsConf", ng-model="exp.bsConf",required)
-            | Use HARQ only
-          label.radio
-            input(value="NC", type="radio", name="bsConf", ng-model="exp.bsConf", required)
-            span Use NC
-            div(ng-show="exp.bsConf=='NC'")
-              .span3
-                .row
-                  span.span3 Redundancy percentage: {{exp.redundancy}}%
-                .row
-                  span.span3(slider="exp.redundancy") 
+  .row
+    .span8
+      div(ng-show="state=='busy'")
+        p.lead()
+          | Server is working on a job. Please check the status log or click reset to terminate the current job.
+        .btn.btn-primary(ng-click="reset()")
+          | Reset
+        span(ng-show="resetClicked", style="padding-left:10px;")
+          | Resetting...
+      div(ng-show="state=='idle'")
+        ul.breadcrumb.wizard
+          li(ng-active="activeStep==1")
+            a 
+              span.step 1.
+              span Check access to orbit
+            span.wizard-arrow
+          li(ng-active="activeStep==2")
+            a 
+              span.step 2.
+              span Check node status
+          li(ng-active="activeStep==3")
+            a 
+              span.step 3.
+              span New Experiment
 
-    .form-actions
-      input.btn.btn-primary.hspace10(type="submit", value='Run the experiment', ng-disabled="!isNodeReady() || scheduleDisabled")
-      span(ng-show="!isNodeReady()")
-        |   Please setup nodes before running a new experiment.
-      span(ng-show="scheduleDisabled")
-        |   Please wait until the previous experiment has finished before running a new one.
+        div.well(ng-show="activeStep==1")
+          p.lead 
+            | Please schedule a time 
+            a(href="https://www.orbit-lab.org/schedule/") here
+          p.lead 
+            | Waiting for an access to orbit-lab...
+
+        div.well(ng-show="activeStep==2")
+          p.lead 
+            | Waiting for an access to nodes... or click setup nodes
+          .btn.btn-primary(ng-click="setup()",ng-disabled="isNodeReady()")
+            | Setup Nodes
+          .btn(ng-class="getN1Class()", disabled)
+            | N1 {{node1Status}}
+          .btn(ng-class="getN2Class()", disabled)
+            | N2 {{node2Status}}
+
+        div.well(ng-show="activeStep==3")
+          h1.headline Please config a new experiment
+          form.form-horizontal(ng-submit="schedule()")
+            fieldset
+              legend Experiment Type
+              .control-group
+                .controls
+                  label.radio
+                    input(value="Throughput and Loss", type="radio", name="expType", ng-model="exp.expType",required)
+                    | Throughput and Loss
+                  label.radio
+                    input(value="File Transfer", type="radio", name="expType", ng-model="exp.expType", required)
+                    | File Transfer
+            fieldset
+              legend Base Station Configuration
+              .control-group
+                .controls
+                  label.radio
+                    input(value="HARQ and ARQ", type="radio", name="bsConf", ng-model="exp.bsConf", required)
+                    | Use HARQ/ARQ
+                  label.radio
+                    input(value="HARQ only", type="radio", name="bsConf", ng-model="exp.bsConf",required)
+                    | Use HARQ only
+                  label.radio
+                    input(value="NC", type="radio", name="bsConf", ng-model="exp.bsConf", required)
+                    span Use NC
+                    div(ng-show="exp.bsConf=='NC'")
+                      .span3
+                        .row
+                          span.span3 Redundancy percentage: {{exp.redundancy}}%
+                        .row
+                          span.span3(slider="exp.redundancy") 
+
+            .form-actions
+              input.btn.btn-primary.hspace10(type="submit", value='Run the experiment', ng-disabled="!isNodeReady() || scheduleDisabled")
+              span(ng-show="!isNodeReady()")
+                |   Please setup nodes before running a new experiment.
+              span(ng-show="scheduleDisabled")
+                |   Please wait until the previous experiment has finished before running a new one.
+    .span4
+      .row
+        .span4
+          textarea#status.span4(rows=2)
+      .row
+        .span4
+          textarea#statusLog.span4(rows=25)
 

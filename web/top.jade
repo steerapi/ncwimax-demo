@@ -10,15 +10,15 @@
         ul.nav
           li(ng-class="{active:tab=='New Experiment'}", ng-click="tab='New Experiment'")
             a New Experiment
-        ul.nav
-          li(ng-class="{active:tab=='Status'}", ng-click="tab='Status'")
-            a Status
+        //- ul.nav
+        //-   li(ng-class="{active:tab=='Status'}", ng-click="tab='Status'")
+        //-     a Status
         ul.nav
           li(ng-class="{active:tab=='Scheduled Experiments'}", ng-click="tab='Scheduled Experiments'")
             a View Results
       .pull-right
-        .btn.btn-primary(ng-click="setup()",ng-disabled="isNodeReady()")
-          | Setup Nodes
+        //- .btn.btn-primary(ng-click="setup()",ng-disabled="isNodeReady()")
+          //- | Setup Nodes
         .btn(ng-class="getN1Class()", disabled)
           | N1 {{node1Status}}
         .btn(ng-class="getN2Class()", disabled)

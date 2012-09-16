@@ -100,11 +100,12 @@ OldCtrl = function($scope) {
   return $scope.updatePlotFileTransfer();
 };
 
-MainCtrl = function($scope) {
-  var appendStatus, appendStatusLog, socket;
+MainCtrl = function($scope, $timeout) {
+  var appendStatus, appendStatusLog, chk, currentExp, scheduleDisabled, socket;
   $scope.isNodeReady = function() {
     return $scope.node1Status === "ON" && $scope.node2Status === "ON";
   };
+  $scope.activeStep = 1;
   appendStatus = function(data) {
     var txt;
     txt = $("#status");
@@ -132,17 +133,42 @@ MainCtrl = function($scope) {
     localStorage.setItem("exp", angular.toJson($scope.experiments));
   }
   socket = io.connect();
+  $timeout(chk = function() {
+    if ($scope.activeStep === 1) {
+      socket.emit("checkOrbit");
+    } else if ($scope.activeStep === 2) {
+      socket.emit("checkNodes");
+    }
+    return $timeout(chk, 1000);
+  }, 1000);
   socket.on("consolelog", function(data) {
     return appendStatusLog(data);
   });
   socket.on("disconnect", function(data) {
     return alert("You are disconnected. Please refresh the page before continuing.");
   });
-  socket.on("status", function(data) {
+  socket.on("state", function(data) {
+    var txt;
+    $scope.state = data.state;
+    txt = $("#status");
+    txt.val(data.his1);
+    txt.scrollTop(txt[0].scrollHeight - txt.height());
+    txt = $("#statusLog");
+    txt.val(data.his2);
+    txt.scrollTop(txt[0].scrollHeight - txt.height());
+    return $scope.$apply();
+  });
+  socket.on("checkOrbit", function(access) {
+    if (access) {
+      return $scope.activeStep = 2;
+    }
+  });
+  socket.on("checkNodes", function(data) {
     $scope.node1Status = data[0];
     $scope.node2Status = data[1];
     if ($scope.isNodeReady()) {
       $scope.setupDisabled = true;
+      $scope.activeStep = 3;
     } else {
       $scope.setupDisabled = false;
     }
@@ -159,6 +185,20 @@ MainCtrl = function($scope) {
     return $scope.$apply();
   });
   $scope.setupDisabled = true;
+  currentExp = {};
+  $scope.resetClicked = false;
+  $scope.cancelCurrent = function() {
+    delete $scope.experiments[currentExp.id];
+    socket.emit("cancel", currentExp);
+    return localStorage.setItem("exp", angular.toJson($scope.experiments));
+  };
+  $scope.reset = function(exp) {
+    $scope.resetClicked = true;
+    $timeout(function() {
+      return $scope.resetClicked = false;
+    }, 2000);
+    return socket.emit("cancel");
+  };
   $scope.cancel = function(exp) {
     delete $scope.experiments[exp.id];
     socket.emit("cancel", exp);
@@ -182,28 +222,17 @@ MainCtrl = function($scope) {
     return $scope.setupDisabled = false;
   });
   $scope.setup = function() {
-    appendStatus("Setting up nodes 1 and 2. This operation takes up to 15 minuites.\n");
     $scope.setupDisabled = true;
-    $scope.tab = "Status";
     return socket.emit("setup");
   };
-  $scope.scheduleDisabled = false;
-  socket.on("ready", function(data) {
-    return $scope.scheduleDisabled = false;
-  });
+  scheduleDisabled = false;
   $scope.schedule = function() {
-    var exp, txt;
-    $scope.scheduleDisabled = true;
-    $scope.tab = "Status";
+    var exp;
     exp = $.extend(true, {
       id: $scope.experiments.length,
       status: "scheduled"
     }, $scope.exp);
-    txt = "Running " + exp.expType + " experiment with " + exp.bsConf + "\n";
-    if (exp.bsConf === "NC") {
-      txt += "-" + exp.redundancy;
-    }
-    appendStatus(txt);
+    currentExp = exp;
     if (exp.expType === "Throughput and Loss") {
       exp.result = {
         loss: "-",
@@ -217,5 +246,5 @@ MainCtrl = function($scope) {
     $scope.experiments.push(exp);
     return socket.emit('run', angular.toJson(exp));
   };
-  return $scope.abstract = "\nWe design and implement a network-coding-enabled reliability architecture \nfor next generation wireless networks. Our network\ncoding (NC) architecture uses a flexible thread-based design, with each\nencoder-decoder instance applying systematic intra-session random linear \nnetwork coding as a packet erasure code at the IP layer. Using GENI\nWiMAX platforms, a series of point-to-point transmission experiments\nwere conducted to compare the performance of the NC architecture\nto that of the Automatic Repeated reQuest (ARQ) and Hybrid ARQ\n(HARQ) mechanisms. In our scenarios, the proposed architecture is able\nto decrease packet loss from around 11-32% to nearly 0%; compared to\nHARQ and joint HARQ/ARQ mechanisms, the NC architecture offers\nup to 5.9 times gain in throughput and 5.5 times reduction in end-to-end \nfile transfer delay. By establishing NC as a potential substitute for\nHARQ/ARQ, our experiments offer important insights into cross-layer\ndesigns of next generation wireless networks.\n";
+  return $scope.abstract = "";
 };

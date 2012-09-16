@@ -12,12 +12,11 @@ exports.consolestream = consolestream
 cps = []
 
 exports.cancel = ->
-  console.log "CANCEL"
   try
     for cp in cps
-      process.kill cp.pid,"SIGINT"
-      process.kill cp.pid,"SIGHUP"
-      process.kill cp.pid,"SIGTERM"
+      cp.kill "SIGINT"
+      cp.kill "SIGHUP"
+      cp.kill "SIGTERM"
   catch error
     console.log error
   # consolestream.write = (data)->
@@ -93,12 +92,21 @@ parseStatus = (data)->
   catch err
     return ["OFF","OFF"]
 
+exports.checkOrbit = (cb)->
+  statusStream = new stream.Stream()
+  statusStream.writable = true
+  statusStream.write = (data)->
+    true  
+  exec "ls", (err, result)->
+    cb? result.length==1
+  , statusStream
+
 exports.checkNodes = (cb)->
   statusStream = new stream.Stream()
   statusStream.writable = true
   statusStream.write = (data)->
     true  
-  exec "ncdemo/check.sh", (err, result)->
+  exec "ncdemo/check-nodes.sh", (err, result)->
     cb? parseStatus(result.join("\n"))
   , statusStream
 
@@ -146,5 +154,7 @@ exports.runUFTP = (cb)->
       cb? err
   ,"stderr"
 
+# exec "ls", (err, result)->
+#   console.log err,result
 # exports.runUFTP (result)->
 #   console.log "result",result

@@ -281,7 +281,8 @@ function chain (context) {
           return;
         }
         
-        callback(null, stdout);
+        if(callback)
+          callback(null, stdout);
       });
             
       return context.process;

@@ -23,13 +23,12 @@ cps = [];
 
 exports.cancel = function() {
   var cp, _i, _len;
-  console.log("CANCEL");
   try {
     for (_i = 0, _len = cps.length; _i < _len; _i++) {
       cp = cps[_i];
-      process.kill(cp.pid, "SIGINT");
-      process.kill(cp.pid, "SIGHUP");
-      process.kill(cp.pid, "SIGTERM");
+      cp.kill("SIGINT");
+      cp.kill("SIGHUP");
+      cp.kill("SIGTERM");
     }
   } catch (error) {
     console.log(error);
@@ -111,6 +110,18 @@ parseStatus = function(data) {
   }
 };
 
+exports.checkOrbit = function(cb) {
+  var statusStream;
+  statusStream = new stream.Stream();
+  statusStream.writable = true;
+  statusStream.write = function(data) {
+    return true;
+  };
+  return exec("ls", function(err, result) {
+    return typeof cb === "function" ? cb(result.length === 1) : void 0;
+  }, statusStream);
+};
+
 exports.checkNodes = function(cb) {
   var statusStream;
   statusStream = new stream.Stream();
@@ -118,7 +129,7 @@ exports.checkNodes = function(cb) {
   statusStream.write = function(data) {
     return true;
   };
-  return exec("ncdemo/check.sh", function(err, result) {
+  return exec("ncdemo/check-nodes.sh", function(err, result) {
     return typeof cb === "function" ? cb(parseStatus(result.join("\n"))) : void 0;
   }, statusStream);
 };

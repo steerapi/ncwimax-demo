@@ -137,9 +137,10 @@ OldCtrl = ($scope)->
   $scope.updatePlotThruoghputLoss()
   $scope.updatePlotFileTransfer()
 
-MainCtrl = ($scope)->
+MainCtrl = ($scope,$timeout)->
   $scope.isNodeReady = ->
     return $scope.node1Status == "ON" and $scope.node2Status == "ON"
+  $scope.activeStep = 1
 
   appendStatus = (data)->
     txt = $("#status")
@@ -162,15 +163,37 @@ MainCtrl = ($scope)->
     $scope.experiments = []
     localStorage.setItem "exp", angular.toJson($scope.experiments)
   socket = io.connect()
+
+  $timeout chk=->
+    if $scope.activeStep==1
+      socket.emit "checkOrbit"
+    else if $scope.activeStep==2
+      socket.emit "checkNodes"
+    $timeout chk,1000
+  , 1000
+
   socket.on "consolelog", (data)->
     appendStatusLog data
   socket.on "disconnect", (data)->
     alert "You are disconnected. Please refresh the page before continuing."
-  socket.on "status", (data)->
+  socket.on "state", (data)->
+    $scope.state = data.state
+    txt = $("#status")
+    txt.val( data.his1 )
+    txt.scrollTop(txt[0].scrollHeight - txt.height())
+    txt = $("#statusLog")
+    txt.val( data.his2 )
+    txt.scrollTop(txt[0].scrollHeight - txt.height())
+    $scope.$apply()
+  socket.on "checkOrbit", (access)->
+    if(access)
+      $scope.activeStep=2
+  socket.on "checkNodes", (data)->
     $scope.node1Status=data[0]
     $scope.node2Status=data[1]
     if $scope.isNodeReady()
       $scope.setupDisabled = true
+      $scope.activeStep=3
     else
       $scope.setupDisabled = false
     $scope.$apply()
@@ -182,6 +205,18 @@ MainCtrl = ($scope)->
     localStorage.setItem "exp", angular.toJson($scope.experiments)
     $scope.$apply()
   $scope.setupDisabled = true
+  currentExp = {}
+  $scope.resetClicked = false
+  $scope.cancelCurrent = ->
+    delete $scope.experiments[currentExp.id]
+    socket.emit "cancel", currentExp
+    localStorage.setItem "exp", angular.toJson($scope.experiments)
+  $scope.reset = (exp)->
+    $scope.resetClicked = true
+    $timeout ->
+      $scope.resetClicked = false
+    , 2000
+    socket.emit "cancel"
   $scope.cancel = (exp)->
     delete $scope.experiments[exp.id]
     socket.emit "cancel", exp
@@ -200,26 +235,21 @@ MainCtrl = ($scope)->
   socket.on "setupExecuted", (data)->
     $scope.setupDisabled = false
   $scope.setup = ->
-    appendStatus "Setting up nodes 1 and 2. This operation takes up to 15 minuites.\n"
+    # appendStatus "Setting up nodes 1 and 2. This operation takes up to 15 minuites.\n"
     $scope.setupDisabled = true
-    $scope.tab = "Status"
     socket.emit "setup"
 
-  $scope.scheduleDisabled = false
-  socket.on "ready", (data)->
-    $scope.scheduleDisabled = false
-
+  scheduleDisabled = false
   $scope.schedule = ->
-    $scope.scheduleDisabled = true
-    $scope.tab = "Status"
     exp = $.extend true,
       id: $scope.experiments.length
       status: "scheduled"
     ,$scope.exp
-    txt = "Running #{exp.expType} experiment with #{exp.bsConf}\n"
-    if exp.bsConf == "NC"
-      txt+="-#{exp.redundancy}"
-    appendStatus txt
+    currentExp = exp
+    # txt = "\nRunning #{exp.expType} experiment with #{exp.bsConf}"
+    # if exp.bsConf == "NC"
+    #   txt+="-#{exp.redundancy}"
+    # appendStatus txt
     if exp.expType == "Throughput and Loss"
       exp.result =
         loss: "-"
@@ -230,22 +260,4 @@ MainCtrl = ($scope)->
     $scope.experiments.push exp
     socket.emit 'run', angular.toJson(exp)
 
-  $scope.abstract = """
-
-We design and implement a network-coding-enabled reliability architecture 
-for next generation wireless networks. Our network
-coding (NC) architecture uses a flexible thread-based design, with each
-encoder-decoder instance applying systematic intra-session random linear 
-network coding as a packet erasure code at the IP layer. Using GENI
-WiMAX platforms, a series of point-to-point transmission experiments
-were conducted to compare the performance of the NC architecture
-to that of the Automatic Repeated reQuest (ARQ) and Hybrid ARQ
-(HARQ) mechanisms. In our scenarios, the proposed architecture is able
-to decrease packet loss from around 11-32% to nearly 0%; compared to
-HARQ and joint HARQ/ARQ mechanisms, the NC architecture offers
-up to 5.9 times gain in throughput and 5.5 times reduction in end-to-end 
-file transfer delay. By establishing NC as a potential substitute for
-HARQ/ARQ, our experiments offer important insights into cross-layer
-designs of next generation wireless networks.
-
-"""
+  $scope.abstract = """"""
