@@ -45,7 +45,7 @@ exec = function(cmd, cb, _consolestream, stream) {
     stream = "stdout";
   }
   try {
-    cp = nexpect.spawn("ssh", ["fouli@console.sb4.orbit-lab.org", cmd], {
+    cp = nexpect.spawn("ssh", ["-o", "StrictHostKeyChecking=no", "fouli@console.sb4.orbit-lab.org", cmd], {
       verbose: true,
       stream: stream,
       consolestream: _consolestream
@@ -118,7 +118,7 @@ exports.checkOrbit = function(cb) {
     return true;
   };
   return exec("ls", function(err, result) {
-    return typeof cb === "function" ? cb(result.length === 1) : void 0;
+    return typeof cb === "function" ? cb(result.length > 0) : void 0;
   }, statusStream);
 };
 
