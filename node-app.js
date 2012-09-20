@@ -114,7 +114,7 @@ io.sockets.on("connection", function(_socket) {
 });
 
 schedule = function(exp, cb) {
-  var run, txt;
+  var redundancy, run, txt;
   txt = "\nRunning " + exp.expType + " experiment with " + exp.bsConf;
   if (exp.bsConf === "NC") {
     txt += "-" + exp.redundancy;
@@ -131,16 +131,17 @@ schedule = function(exp, cb) {
         return ssh.runUFTP(cb);
     }
   };
+  redundancy = exp.redundancy;
   switch (exp.bsConf) {
     case "HARQ and ARQ":
-      return ssh.config(1, 1, 0, run);
+      return ssh.config(1, 1, 0, redundancy, run);
     case "ARQ only":
-      return ssh.config(0, 1, 0, run);
+      return ssh.config(0, 1, 0, redundancy, run);
     case "HARQ only":
-      return ssh.config(1, 0, 0, run);
+      return ssh.config(1, 0, 0, redundancy, run);
     case "NC":
-      return ssh.config(0, 0, 1, run);
+      return ssh.config(0, 0, 1, redundancy, run);
     case "Raw":
-      return ssh.config(0, 0, 0, run);
+      return ssh.config(0, 0, 0, redundancy, run);
   }
 };

@@ -100,14 +100,15 @@ schedule = (exp,cb)->
         # cb 
         #   time_s: 20
   # run()
+  redundancy = exp.redundancy
   switch exp.bsConf
     when "HARQ and ARQ"
-      ssh.config 1,1,0,run
+      ssh.config 1,1,0,redundancy,run
     when "ARQ only"
-      ssh.config 0,1,0,run
+      ssh.config 0,1,0,redundancy,run
     when "HARQ only"
-      ssh.config 1,0,0,run
+      ssh.config 1,0,0,redundancy,run
     when "NC"
-      ssh.config 0,0,1,run
+      ssh.config 0,0,1,redundancy,run
     when "Raw"
-      ssh.config 0,0,0,run
+      ssh.config 0,0,0,redundancy,run

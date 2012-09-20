@@ -45,7 +45,7 @@ exec = function(cmd, cb, _consolestream, stream) {
     stream = "stdout";
   }
   try {
-    cp = nexpect.spawn("ssh", ["fouli@console.sb4.orbit-lab.org", cmd], {
+    cp = nexpect.spawn("ssh", ["-o", "StrictHostKeyChecking=no", "fouli@console.sb4.orbit-lab.org", cmd], {
       verbose: true,
       stream: stream,
       consolestream: _consolestream
@@ -142,8 +142,8 @@ exports.setup = function(cb) {
 
 exports.restartBS = function(cb) {};
 
-exports.config = function(harq, arq, nc, cb) {
-  return exec("ncdemo/bs.sh " + harq + " " + arq + " && ncdemo/setup.sh " + nc, function(err, result) {
+exports.config = function(harq, arq, nc, redundancy, cb) {
+  return exec("ncdemo/bs.sh " + harq + " " + arq + " && ncdemo/setup.sh " + nc + " " + redundancy, function(err, result) {
     return typeof cb === "function" ? cb(err, result) : void 0;
   });
 };

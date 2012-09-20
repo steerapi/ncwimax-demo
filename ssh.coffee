@@ -28,7 +28,7 @@ exports.cancel = ->
 
 exec = (cmd, cb, _consolestream=consolestream, stream="stdout")->
   try
-    cp = nexpect.spawn("ssh", ["fouli@console.sb4.orbit-lab.org", cmd],{verbose:true,stream:stream,consolestream:_consolestream})
+    cp = nexpect.spawn("ssh", ["-o","StrictHostKeyChecking=no","fouli@console.sb4.orbit-lab.org", cmd],{verbose:true,stream:stream,consolestream:_consolestream})
     .run cb
     cps.push cp
     cp
@@ -115,8 +115,8 @@ exports.setup = (cb)->
     cb? err, result
 exports.restartBS = (cb)->
   # exec ""
-exports.config = (harq,arq,nc,cb)->
-  exec "ncdemo/bs.sh #{harq} #{arq} && ncdemo/setup.sh #{nc}", (err, result)->
+exports.config = (harq,arq,nc,redundancy,cb)->
+  exec "ncdemo/bs.sh #{harq} #{arq} && ncdemo/setup.sh #{nc} #{redundancy}", (err, result)->
     # console.log err
     # 
     # console.log err
