@@ -171,10 +171,12 @@ exports.runUFTP = function(cb) {
   return exec("ncdemo/run-uftp-sender.sh", function(err, result) {
     var uftpResult;
     if (!err) {
+      console.log(result);
       uftpResult = parseUFTP(result.join("\n"));
+      console.log("parsed", uftpResult);
       return typeof cb === "function" ? cb(uftpResult) : void 0;
     } else {
       return typeof cb === "function" ? cb(err) : void 0;
     }
-  }, "stderr");
+  });
 };

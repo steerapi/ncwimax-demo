@@ -148,12 +148,12 @@ exports.runUFTP = (cb)->
   exec "ncdemo/run-uftp-receiver.sh", (err, result)->
   exec "ncdemo/run-uftp-sender.sh",(err, result)->
     unless err
-      # console.log result
+      console.log result
       uftpResult = parseUFTP result.join("\n")
+      console.log "parsed", uftpResult
       cb? uftpResult
     else
       cb? err
-  ,"stderr"
 
 # exec "ls", (err, result)->
 #   console.log err,result
