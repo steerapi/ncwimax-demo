@@ -100,8 +100,8 @@ OldCtrl = function($scope) {
   return $scope.updatePlotFileTransfer();
 };
 
-MainCtrl = function($scope, $timeout) {
-  var appendStatus, appendStatusLog, chk, currentExp, scheduleDisabled, scl, scrolling, socket;
+MainCtrl = function($scope) {
+  var appendStatus, appendStatusLog, currentExp, scheduleDisabled, scl, scrolling, socket;
   $scope.isNodeReady = function() {
     return $scope.node1Status === "ON" && $scope.node2Status === "ON";
   };
@@ -133,13 +133,12 @@ MainCtrl = function($scope, $timeout) {
     localStorage.setItem("exp", angular.toJson($scope.experiments));
   }
   socket = io.connect();
-  $timeout(chk = function() {
+  setInterval(function() {
     if ($scope.activeStep === 1) {
-      socket.emit("checkOrbit");
+      return socket.emit("checkOrbit");
     } else if ($scope.activeStep === 2) {
-      socket.emit("checkNodes");
+      return socket.emit("checkNodes");
     }
-    return $timeout(chk, 1000);
   }, 1000);
   socket.on("consolelog", function(data) {
     return appendStatusLog(data);

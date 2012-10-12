@@ -137,7 +137,7 @@ OldCtrl = ($scope)->
   $scope.updatePlotThruoghputLoss()
   $scope.updatePlotFileTransfer()
 
-MainCtrl = ($scope,$timeout)->
+MainCtrl = ($scope)->
   $scope.isNodeReady = ->
     return $scope.node1Status == "ON" and $scope.node2Status == "ON"
   $scope.activeStep = 1
@@ -164,12 +164,11 @@ MainCtrl = ($scope,$timeout)->
     localStorage.setItem "exp", angular.toJson($scope.experiments)
   socket = io.connect()
 
-  $timeout chk=->
+  setInterval ->
     if $scope.activeStep==1
       socket.emit "checkOrbit"
     else if $scope.activeStep==2
       socket.emit "checkNodes"
-    $timeout chk,1000
   , 1000
 
   socket.on "consolelog", (data)->
