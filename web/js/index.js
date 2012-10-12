@@ -101,22 +101,25 @@ OldCtrl = function($scope) {
 };
 
 MainCtrl = function($scope) {
-  var appendStatus, appendStatusLog, currentExp, scheduleDisabled, scl, scrolling, socket;
+  var appendStatus, appendStatusLog, currentExp, scheduleDisabled, scl, scrolling, socket, txt1, txt2;
   $scope.isNodeReady = function() {
     return $scope.node1Status === "ON" && $scope.node2Status === "ON";
   };
   $scope.activeStep = 1;
+  txt1 = $("#status");
+  txt2 = $("#statusLog");
   appendStatus = function(data) {
-    var txt;
-    txt = $("#status");
-    txt.val(txt.val() + data);
-    return txt.scrollTop(txt[0].scrollHeight - txt.height());
+    txt1.val(txt1.val() + data);
+    if (!scrolling) {
+      return txt1.scrollTop(txt1[0].scrollHeight - txt1.height());
+    }
   };
   appendStatusLog = function(data) {
-    var txt;
-    txt = $("#statusLog");
-    txt.val(txt.val() + data);
-    return txt.scrollTop(txt[0].scrollHeight - txt.height());
+    txt2 = $("#statusLog");
+    txt2.val(txt2.val() + data);
+    if (!scrolling) {
+      return txt2.scrollTop(txt2[0].scrollHeight - txt2.height());
+    }
   };
   $scope.tab = "Home";
   $scope.exp = {
@@ -153,14 +156,11 @@ MainCtrl = function($scope) {
       }, 5000);
     }
   };
-  $("#status").scroll(scl);
-  $("#statusLog").scroll(scl);
+  txt1.scroll(scl);
+  txt2.scroll(scl);
   socket.on("state", function(data) {
-    var txt1, txt2;
     $scope.state = data.state;
-    txt1 = $("#status");
     txt1.val(data.his1);
-    txt2 = $("#statusLog");
     txt2.val(data.his2);
     if (!scrolling) {
       txt1.scrollTop(txt1[0].scrollHeight - txt1.height());
@@ -170,7 +170,8 @@ MainCtrl = function($scope) {
   });
   socket.on("checkOrbit", function(access) {
     if (access) {
-      return $scope.activeStep = 2;
+      $scope.activeStep = 2;
+      return $scope.$apply();
     }
   });
   socket.on("checkNodes", function(data) {

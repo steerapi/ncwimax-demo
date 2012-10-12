@@ -141,15 +141,18 @@ MainCtrl = ($scope)->
   $scope.isNodeReady = ->
     return $scope.node1Status == "ON" and $scope.node2Status == "ON"
   $scope.activeStep = 1
+  txt1 = $("#status")
+  txt2 = $("#statusLog")
 
   appendStatus = (data)->
-    txt = $("#status")
-    txt.val( txt.val() + data)
-    txt.scrollTop(txt[0].scrollHeight - txt.height())
+    txt1.val( txt1.val() + data)
+    if not scrolling
+      txt1.scrollTop(txt1[0].scrollHeight - txt1.height())
   appendStatusLog = (data)->
-    txt = $("#statusLog")
-    txt.val( txt.val() + data)
-    txt.scrollTop(txt[0].scrollHeight - txt.height())
+    txt2 = $("#statusLog")
+    txt2.val( txt2.val() + data)
+    if not scrolling
+      txt2.scrollTop(txt2[0].scrollHeight - txt2.height())
   $scope.tab = "Home"
   $scope.exp = 
     expType: null
@@ -182,21 +185,23 @@ MainCtrl = ($scope)->
       setTimeout ->
         scrolling = false
       , 5000
-  $("#status").scroll scl
-  $("#statusLog").scroll scl
+  txt1.scroll scl
+  txt2.scroll scl
+
   socket.on "state", (data)->
     $scope.state = data.state
-    txt1 = $("#status")
     txt1.val( data.his1 )
-    txt2 = $("#statusLog")
     txt2.val( data.his2 )
     if not scrolling
       txt1.scrollTop(txt1[0].scrollHeight - txt1.height())
       txt2.scrollTop(txt2[0].scrollHeight - txt2.height())
     $scope.$apply()
+
   socket.on "checkOrbit", (access)->
     if(access)
       $scope.activeStep=2
+      $scope.$apply()
+
   socket.on "checkNodes", (data)->
     $scope.node1Status=data[0]
     $scope.node2Status=data[1]
@@ -214,6 +219,7 @@ MainCtrl = ($scope)->
     $.extend true,exp,data
     localStorage.setItem "exp", angular.toJson($scope.experiments)
     $scope.$apply()
+
   $scope.setupDisabled = true
   currentExp = {}
   $scope.resetClicked = false
