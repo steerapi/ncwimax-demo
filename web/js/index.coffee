@@ -149,7 +149,6 @@ MainCtrl = ($scope)->
     if not scrolling
       txt1.scrollTop(txt1[0].scrollHeight - txt1.height())
   appendStatusLog = (data)->
-    txt2 = $("#statusLog")
     txt2.val( txt2.val() + data)
     if not scrolling
       txt2.scrollTop(txt2[0].scrollHeight - txt2.height())
