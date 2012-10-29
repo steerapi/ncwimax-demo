@@ -8,11 +8,14 @@
           li(ng-class="{active:tab=='Home'}", ng-click="tab='Home'")
             a Home
         ul.nav
+          li(ng-class="{active:tab=='Experimental Setup'}", ng-click="tab='Experimental Setup'")
+            a Setup
+        ul.nav
+          li(ng-class="{active:tab=='MAC/PHY Parameters'}", ng-click="tab='MAC/PHY Parameters'")
+            a MAC/PHY Parameters
+        ul.nav
           li(ng-class="{active:tab=='New Experiment'}", ng-click="tab='New Experiment'")
             a New Experiment
-        //- ul.nav
-        //-   li(ng-class="{active:tab=='Status'}", ng-click="tab='Status'")
-        //-     a Status
         ul.nav
           li(ng-class="{active:tab=='Scheduled Experiments'}", ng-click="tab='Scheduled Experiments'")
             a View Results

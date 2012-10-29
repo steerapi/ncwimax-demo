@@ -1,6 +1,6 @@
 .container(ng-show="tab=='Home'")
-  h1 Welcome to Network Coding in WiMAX Demo
-  p.lead
+  h1(style="font-size: 22px;line-height: 27px;") Welcome to Network Coding in WiMAX Demo
+  p.lead(style="font-size: 16px;line-height: 20px;")
     | We design and implement a network-coding-enabled reliability architecture 
     | for next generation wireless networks. Our network
     | coding (NC) architecture uses a flexible thread-based design, with each
@@ -16,8 +16,9 @@
     | file transfer delay. By establishing NC as a potential substitute for
     | HARQ/ARQ, our experiments offer important insights into cross-layer
     | designs of next generation wireless networks.
-  img(src="")
-  p.lead
+  .row(style="text-align: center;")
+    img(src="./img/BS_SS_web.png", style="max-width:50%")
+  p.lead(style="font-size: 16px;line-height: 27px;") 
     -var html = "<b>New Experiment</b>"
     | Click !{html} Tab to start a new experiment now.
   
