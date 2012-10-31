@@ -11,7 +11,7 @@ all: $(HTML) $(CSS) $(JS)
 
 index.html: index.jade new.jade old.jade top.jade home.jade status.jade
 
-%.html: %.jade
+%.html: %.jade $(JADE)
 	jade -p . $<
 
 %.css: %.styl

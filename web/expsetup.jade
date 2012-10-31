@@ -1,17 +1,24 @@
-.container.lead(ng-show="tab=='Experimental Setup'", style="font-size: 16px;line-height: 20px;")
-    li Four fixed uplink MCS/tx. power settings
-    li Default MAC/PHY parameters used in BS and SS (listed below)
-    li Throughput/Loss Experiment: Fixed offered load (6Mbps) and duration (30s)
-    li File Transfer Experiment: Fixed offered load (6Mbps) and file size (10MB)
-    li Reliability Configurations:
-      ul
-        li Raw: No applied reliability scheme
-        li HARQ (CC)
-        li Joint HARQ-ARQ
-        li NC configurations denoted NC-m, where m is the redundancy parameter (i.e., percentage of redundancy packets per block)
-    li Simple demonstrated configuration:
-      ul
-        li Single round of redundancy packets per block, sent a priori immediately after systematic (uncoded) packets
-        li Block size = 120 packets
-        li Coded packet size = 1400 bytes
-        li Redundancy factor from 0-100%
+.container(ng-show="tab=='Experimental Setup'")
+  .row
+    .span6
+      h1(style="font-size: 24px;line-height: 27px;") Experimental Setup
+      .lead(style="font-size: 16px;line-height: 20px;")
+        li Four fixed uplink MCS/tx. power settings
+        li Default MAC/PHY parameters used in BS and SS (listed below)
+        li Throughput/Loss Experiment: Fixed offered load (6Mbps) and duration (30s)
+        li File Transfer Experiment: Fixed offered load (6Mbps) and file size (10MB)
+        li Reliability Configurations:
+          ul
+            li Raw: No applied reliability scheme
+            li HARQ (CC)
+            li Joint HARQ-ARQ
+            li NC configurations denoted NC-m, where m is the redundancy parameter (i.e., percentage of redundancy packets per block)
+        li Simple demonstrated configuration:
+          ul
+            li Single round of redundancy packets per block, sent a priori immediately after systematic (uncoded) packets
+            li Block size = 120 packets
+            li Coded packet size = 1400 bytes
+            li Redundancy factor from 0-100%
+    .span6
+      h1(style="font-size: 24px;line-height: 27px;") MAC/PHY Parameters
+      include macphy
