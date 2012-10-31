@@ -1,15 +1,1 @@
-<div ng-show="tab=='Home'" class="container"><h1 style="font-size: 24px;line-height: 27px;">Welcome to Network Coding in WiMAX Demo</h1><p style="font-size: 16px;line-height: 20px;" class="lead">We design and implement a network-coding-enabled reliability architecture 
-for next generation wireless networks. Our network
-coding (NC) architecture uses a flexible thread-based design, with each
-encoder-decoder instance applying systematic intra-session random linear 
-network coding as a packet erasure code at the IP layer. Using GENI
-WiMAX platforms, a series of point-to-point transmission experiments
-were conducted to compare the performance of the NC architecture
-to that of the Automatic Repeated reQuest (ARQ) and Hybrid ARQ
-(HARQ) mechanisms. In our scenarios, the proposed architecture is able
-to decrease packet loss from around 11-32% to nearly 0%; compared to
-HARQ and joint HARQ/ARQ mechanisms, the NC architecture offers
-up to 5.9 times gain in throughput and 5.5 times reduction in end-to-end 
-file transfer delay. By establishing NC as a potential substitute for
-HARQ/ARQ, our experiments offer important insights into cross-layer
-designs of next generation wireless networks.</p><div style="text-align: center;" class="row"><img src="./img/BS_SS_web.png" style="max-width:40%"/></div><p style="font-size: 16px;line-height: 27px;" class="lead"> Click <b>New Experiment</b> Tab to start a new experiment now.</p></div>
+<div ng-show="tab=='Home'" class="container"><h1 style="font-size: 24px;line-height: 27px;">Welcome to Network Coding in WiMAX Demo</h1><p style="font-size: 16px;line-height: 20px;" class="lead">Our demonstration showcases a network-coding (NC)-enabled reliability architecture for next generation wireless networks. Our NC architecture uses a flexible thread-based design, applying systematic intra-session random linear network coding as a packet erasure code at the IP layer. Using GENI WiMAX platforms, a series of point-to-point transmission experiments are conducted to compare NC with Automatic Repeated reQuest (ARQ) and Hybrid ARQ (HARQ). At the application layer, Iperf and UFTP are used to measure throughput, packet loss and file transfer delay. In our selected scenarios, NC offers up to 5.9 times gain in throughput and 5.5 times reduction in file transfer delay, compared to HARQ and joint HARQ/ARQ. Our demonstration hence illustrates that lower-layer redundancy mechanisms such as HARQ and ARQ incur high cost since they operate at the packet-level. Conversely, running at higher layers (e.g., IP) amortizes the cost of redundancy over several packets, thus leading to higher efficiency.</p><div style="text-align: center;" class="row"><img src="./img/BS_SS_web.png" style="max-width:40%"/></div><p style="font-size: 16px;line-height: 27px;" class="lead"> Click <b>New Experiment</b> Tab to start a new experiment now.</p></div>
